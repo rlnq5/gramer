@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#2c1a24">
+    <title>Grammar Lab - Future Perfect</title>
+    <style>
+        :root {
+            --page: #2c1a24;
+            --pink: #8d3155;
+            --pink-dark: #702542;
+            --pink-light: #ffdee9;
+            --gold: #ffe082;
+            --ink: #482234;
+            --muted: #fbe8ef;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 12px;
+            overflow-x: hidden;
+            background: var(--page);
+            color: #333;
+        }
+
+        button, summary {
+            font: inherit;
+        }
+
+        button:focus-visible, summary:focus-visible {
+            outline: 3px solid #f0a4c0;
+            outline-offset: 3px;
+        }
+
+        .app-container {
+            display: flex;
+            width: min(100%, 420px);
+            flex-direction: column;
+            overflow: hidden;
+            border: 4px solid #71304b;
+            border-radius: 30px;
+            background: #fff0f5;
+            box-shadow: 0 15px 35px rgb(0 0 0 / 40%);
+        }
+
+        .app-header {
+            padding: 23px 20px;
+            border-bottom: 3px solid #71304b;
+            background: linear-gradient(135deg, #b34d73, #7d2d4e);
+            color: #fff;
+            text-align: center;
+        }
+
+        .header-kicker {
+            margin-bottom: 5px;
+            color: #ffe4ed;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .app-header h1 {
+            margin-bottom: 7px;
+            font-size: clamp(1.45rem, 7vw, 1.75rem);
+            font-weight: 800;
+        }
+
+        .app-header p {
+            color: #fff4f8;
+            font-size: 0.84rem;
+            line-height: 1.6;
+        }
+
+        .game-section {
+            padding: 15px;
+            margin: 15px;
+            border-radius: 20px;
+            background: var(--pink);
+            color: #fff;
+        }
+
+        .game-title {
+            margin-bottom: 5px;
+            color: #ffe4ed;
+            font-size: 0.88rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .question-count {
+            margin-bottom: 8px;
+            color: #fbd6e3;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+
+        .sentence-hint {
+            margin-bottom: 12px;
+            color: #ffe4e1;
+            font-size: 0.8rem;
+            line-height: 1.55;
+            text-align: center;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        .zone-label {
+            margin-bottom: 5px;
+            color: #ffe4e1;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .drop-zone, .word-pool {
+            display: flex;
+            min-height: 56px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .drop-zone {
+            margin-bottom: 12px;
+            border: 2px dashed #ffd1df;
+            background: rgb(255 255 255 / 13%);
+        }
+
+        .drop-zone.drag-over, .word-pool.drag-over {
+            outline: 2px solid var(--gold);
+            outline-offset: 2px;
+            background: rgb(255 255 255 / 21%);
+        }
+
+        .drop-placeholder {
+            color: #ffe4e1;
+            font-size: 0.82rem;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .word-pool {
+            min-height: 54px;
+            margin-bottom: 14px;
+            background: rgb(0 0 0 / 19%);
+        }
+
+        .word-card {
+            min-height: 36px;
+            padding: 6px 11px;
+            border: 0;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 15%);
+            color: #862b50;
+            cursor: grab;
+            font-size: 0.88rem;
+            font-weight: 700;
+            touch-action: manipulation;
+            user-select: none;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .word-card:hover {
+            background: #fff5f8;
+        }
+
+        .word-card:active {
+            transform: scale(0.96);
+            cursor: grabbing;
+        }
+
+        .word-card[aria-pressed="true"] {
+            background: #fff0f5;
+        }
+
+        .word-card:disabled {
+            cursor: default;
+            opacity: 0.5;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 9px;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-height: 44px;
+            padding: 9px 7px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--gold);
+            color: #3c3032;
+            cursor: pointer;
+            font-size: 0.84rem;
+            font-weight: 800;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .action-btn:hover {
+            background: #ffd54f;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .reset-btn {
+            background: #e96c76;
+            color: #fff;
+        }
+
+        .reset-btn:hover {
+            background: #d84e61;
+        }
+
+        .feedback-box {
+            padding: 11px;
+            margin-top: 12px;
+            border-radius: 12px;
+            background: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            line-height: 1.55;
+            text-align: center;
+        }
+
+        .feedback-box[hidden] {
+            display: none;
+        }
+
+        .feedback-success {
+            border-left: 5px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .feedback-error {
+            border-left: 5px solid #f44336;
+            color: #c62828;
+        }
+
+        .info-section {
+            padding: 0 15px 2px;
+        }
+
+        .info-card {
+            padding: 15px;
+            border: 1px solid #ffdee9;
+            border-radius: 15px;
+            background: #fff;
+            box-shadow: 0 4px 10px rgb(0 0 0 / 5%);
+        }
+
+        .info-card summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            color: #8d3155;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 800;
+            list-style: none;
+            text-align: center;
+        }
+
+        .info-card summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .info-card summary::after {
+            content: "＋";
+            font-size: 1.15rem;
+        }
+
+        .info-card[open] summary::after {
+            content: "−";
+        }
+
+        .rules-content {
+            padding-top: 11px;
+            margin-top: 10px;
+            border-top: 2px solid #ffdee9;
+        }
+
+        .rule-item {
+            margin-bottom: 9px;
+            color: #555;
+            font-size: 0.78rem;
+            line-height: 1.6;
+        }
+
+        .rule-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .rule-item b {
+            color: #8d3155;
+        }
+
+        .app-footer {
+            padding: 12px;
+            margin: 15px;
+            border-radius: 15px;
+            background: var(--pink);
+            color: #fff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        @media (max-width: 350px) {
+            body {
+                padding: 10px 7px;
+            }
+
+            .app-container {
+                border-width: 3px;
+                border-radius: 24px;
+            }
+
+            .game-section {
+                padding: 12px;
+                margin: 11px;
+            }
+
+            .word-pool, .drop-zone {
+                gap: 6px;
+                padding: 8px;
+            }
+
+            .word-card {
+                min-height: 34px;
+                padding: 5px 8px;
+                font-size: 0.81rem;
+            }
+
+            .action-btn {
+                font-size: 0.77rem;
+            }
+
+            .info-section {
+                padding-right: 11px;
+                padding-left: 11px;
+            }
+
+            .app-footer {
+                margin-right: 11px;
+                margin-left: 11px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="app-container">
+        <header class="app-header">
+            <div class="header-kicker">English Grammar · 3rd Secondary</div>
+            <h1>Grammar Lab</h1>
+            <p>Build the sentence by arranging the words in the correct order.</p>
+        </header>
+
+        <section class="game-section" aria-label="Future tenses sentence game">
+            <h2 class="game-title" id="ruleType">Target: Future Perfect</h2>
+            <p class="question-count" id="questionCount"></p>
+            <p class="sentence-hint" id="sentenceHint"></p>
+
+            <p class="zone-label">Your sentence <span aria-hidden="true">↓</span></p>
+            <div class="drop-zone" id="dropZone" aria-label="Your sentence. Drop words here or tap words to remove them." data-zone="answer"></div>
+
+            <p class="zone-label">Word bank <span aria-hidden="true">↓</span></p>
+            <div class="word-pool" id="wordPool" aria-label="Word bank. Tap a word to add it to your sentence." data-zone="pool"></div>
+
+            <div class="btn-group">
+                <button class="action-btn" id="checkButton" type="button">Check Answer</button>
+                <button class="action-btn reset-btn" id="nextButton" type="button">Next Question</button>
+            </div>
+
+            <div class="feedback-box" id="feedbackBox" role="status" aria-live="polite" hidden></div>
+        </section>
+
+        <section class="info-section" aria-label="Grammar rules">
+            <details class="info-card">
+                <summary>The Difference</summary>
+                <div class="rules-content">
+                    <div class="rule-item">
+                        <b>Future Perfect:</b> Focuses on the completion of an action before a specific future time.
+                        <br><i>Form: Subject + will have + past participle (V3)</i>
+                    </div>
+                    <div class="rule-item">
+                        <b>Future Perfect Progressive:</b> Focuses on how long an action will have continued up to a future point.
+                        <br><i>Form: Subject + will have been + verb-ing</i>
+                    </div>
+                </div>
+            </details>
+        </section>
+
+        <footer class="app-footer">رغد العتيبي • 3/3</footer>
+    </main>
+
+    <script>
+        (() => {
+            const questions = [
+                {
+                    type: "Future Perfect",
+                    hint: "An action completed before a specific time.",
+                    words: ["The", "scientists", "will", "have", "finished", "the", "chemical", "test", "by", "tomorrow."],
+                    roles: ["subject determiner", "subject", "future auxiliary", "perfect auxiliary", "past participle (V3)", "object determiner", "object adjective", "object noun", "deadline marker", "future deadline"],
+                    rule: "Future Perfect uses subject + will have + past participle (V3) for an action completed before a future deadline."
+                },
+                {
+                    type: "Future Perfect Progressive",
+                    hint: "Focus on the duration of an ongoing action up to a future time.",
+                    words: ["By", "2030,", "she", "will", "have", "been", "studying", "chemistry", "for", "five", "years."],
+                    roles: ["future-time marker", "future deadline", "subject", "future auxiliary", "perfect auxiliary", "progressive auxiliary", "verb ending in -ing", "verb object", "duration marker", "duration amount", "duration unit"],
+                    rule: "Future Perfect Progressive uses subject + will have been + verb-ing, followed by for and a duration."
+                },
+                {
+                    type: "Future Perfect",
+                    hint: "The project will be complete before the deadline.",
+                    words: ["The", "engineers", "will", "have", "built", "the", "new", "bridge", "by", "June."],
+                    roles: ["subject determiner", "subject", "future auxiliary", "perfect auxiliary", "past participle (V3)", "object determiner", "object adjective", "object noun", "deadline marker", "future deadline"],
+                    rule: "Future Perfect uses subject + will have + past participle (V3) for an action completed before a future deadline."
+                },
+                {
+                    type: "Future Perfect Progressive",
+                    hint: "Show how long the team will have worked on the project.",
+                    words: ["By", "Friday,", "we", "will", "have", "been", "working", "on", "this", "project", "for", "a", "month."],
+                    roles: ["future-time marker", "future deadline", "subject", "future auxiliary", "perfect auxiliary", "progressive auxiliary", "verb ending in -ing", "preposition", "determiner", "object noun", "duration marker", "duration determiner", "duration unit"],
+                    rule: "Future Perfect Progressive uses subject + will have been + verb-ing, followed by for and a duration."
+                },
+                {
+                    type: "Future Perfect",
+                    hint: "The action will be finished before you arrive.",
+                    words: ["I", "will", "have", "completed", "my", "homework", "before", "you", "arrive."],
+                    roles: ["subject", "future auxiliary", "perfect auxiliary", "past participle (V3)", "object determiner", "object noun", "time conjunction", "subject", "present-simple verb in the time clause"],
+                    rule: "Future Perfect uses subject + will have + past participle (V3); after before, use a present-simple time clause."
+                },
+                {
+                    type: "Future Perfect Progressive",
+                    hint: "Focus on the duration of the journey at a future time.",
+                    words: ["By", "noon,", "they", "will", "have", "been", "traveling", "for", "six", "hours."],
+                    roles: ["future-time marker", "future deadline", "subject", "future auxiliary", "perfect auxiliary", "progressive auxiliary", "verb ending in -ing", "duration marker", "duration amount", "duration unit"],
+                    rule: "Future Perfect Progressive uses subject + will have been + verb-ing, followed by for and a duration."
+                }
+            ];
+
+            const ruleType = document.getElementById("ruleType");
+            const sentenceHint = document.getElementById("sentenceHint");
+            const questionCount = document.getElementById("questionCount");
+            const pool = document.getElementById("wordPool");
+            const dropZone = document.getElementById("dropZone");
+            const feedback = document.getElementById("feedbackBox");
+            let currentQuestionIndex = 0;
+            let draggedWordId = null;
+            let completed = false;
+
+            function shuffle(items) {
+                const result = [...items];
+                for (let index = result.length - 1; index > 0; index -= 1) {
+                    const randomIndex = Math.floor(Math.random() * (index + 1));
+                    [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+                }
+                return result;
+            }
+
+            function hideFeedback() {
+                feedback.hidden = true;
+                feedback.textContent = "";
+                feedback.className = "feedback-box";
+            }
+
+            function createWordCard(word, index) {
+                const card = document.createElement("button");
+                card.type = "button";
+                card.className = "word-card";
+                card.textContent = word;
+                card.dataset.wordId = `word-${index}`;
+                card.draggable = true;
+                card.setAttribute("aria-label", `${word} (tap to move)`);
+                card.addEventListener("click", () => {
+                    const destination = card.parentElement === pool ? dropZone : pool;
+                    destination.append(card);
+                    renderPlaceholder();
+                    hideFeedback();
+                });
+                card.addEventListener("dragstart", (event) => {
+                    draggedWordId = card.dataset.wordId;
+                    event.dataTransfer.setData("text/plain", draggedWordId);
+                    event.dataTransfer.effectAllowed = "move";
+                });
+                card.addEventListener("dragend", () => {
+                    draggedWordId = null;
+                    pool.classList.remove("drag-over");
+                    dropZone.classList.remove("drag-over");
+                });
+                return card;
+            }
+
+            function renderPlaceholder() {
+                const placeholder = dropZone.querySelector(".drop-placeholder");
+                if (dropZone.children.length === 0 && !placeholder) {
+                    const message = document.createElement("span");
+                    message.className = "drop-placeholder";
+                    message.textContent = "Drop or tap words here...";
+                    dropZone.append(message);
+                } else if (dropZone.children.length > 1 && placeholder) {
+                    placeholder.remove();
+                }
+            }
+
+            function loadQuestion() {
+                const question = questions[currentQuestionIndex];
+                ruleType.textContent = `Target: ${question.type}`;
+                sentenceHint.textContent = `Hint: ${question.hint}`;
+                questionCount.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+                pool.replaceChildren(...shuffle(question.words).map(createWordCard));
+                dropZone.replaceChildren();
+                renderPlaceholder();
+                completed = false;
+                hideFeedback();
+            }
+
+            function allowDrop(event) {
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "move";
+                event.currentTarget.classList.add("drag-over");
+            }
+
+            function handleDrop(event) {
+                event.preventDefault();
+                const destination = event.currentTarget;
+                destination.classList.remove("drag-over");
+                const id = event.dataTransfer.getData("text/plain") || draggedWordId;
+                const word = document.querySelector(`[data-word-id="${id}"]`);
+                if (!word || ![pool, dropZone].includes(word.parentElement)) return;
+
+                destination.append(word);
+                renderPlaceholder();
+                hideFeedback();
+            }
+
+            function checkAnswer() {
+                if (completed) {
+                    feedback.textContent = "You already got it right! Choose Next Question to keep going.";
+                    feedback.className = "feedback-box feedback-success";
+                    feedback.hidden = false;
+                    return;
+                }
+
+                const question = questions[currentQuestionIndex];
+                const answer = [...dropZone.querySelectorAll(".word-card")].map((card) => card.textContent);
+                if (answer.length !== question.words.length) {
+                    const remainingWords = [...pool.querySelectorAll(".word-card")].map((card) => card.textContent);
+                    const missingWords = remainingWords.length ? `\nStill in the word bank: ${remainingWords.join(" ")}` : "";
+                    feedback.textContent = `Your sentence is incomplete: it has ${answer.length} of ${question.words.length} words.${missingWords}\nRule: ${question.rule}\nCorrect sentence: ${question.words.join(" ")}`;
+                    feedback.className = "feedback-box feedback-error";
+                    feedback.hidden = false;
+                    return;
+                }
+
+                const isCorrect = answer.every((word, index) => word === question.words[index]);
+                if (isCorrect) {
+                    completed = true;
+                    feedback.textContent = "Correct! Great job — the sentence follows the target tense.";
+                    feedback.className = "feedback-box feedback-success";
+                } else {
+                    const wrongIndex = answer.findIndex((word, index) => word !== question.words[index]);
+                    const expectedWord = question.words[wrongIndex];
+                    const placedWord = answer[wrongIndex];
+                    const expectedRole = question.roles[wrongIndex];
+                    const placedIndex = question.words.indexOf(placedWord);
+                    const placedRole = placedIndex >= 0 ? question.roles[placedIndex] : null;
+                    const placementNote = placedRole
+                        ? ` “${placedWord}” belongs elsewhere as the ${placedRole}.`
+                        : "";
+                    feedback.textContent = `Not quite — check word ${wrongIndex + 1}.\nYou put “${placedWord}” here, but this place needs “${expectedWord}” (${expectedRole}).${placementNote}\nRule: ${question.rule}\nCorrect sentence: ${question.words.join(" ")}`;
+                    feedback.className = "feedback-box feedback-error";
+                }
+                feedback.hidden = false;
+            }
+
+            for (const zone of [pool, dropZone]) {
+                zone.addEventListener("dragover", allowDrop);
+                zone.addEventListener("dragleave", (event) => {
+                    if (!zone.contains(event.relatedTarget)) zone.classList.remove("drag-over");
+                });
+                zone.addEventListener("drop", handleDrop);
+            }
+
+            document.getElementById("checkButton").addEventListener("click", checkAnswer);
+            document.getElementById("nextButton").addEventListener("click", () => {
+                currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+                loadQuestion();
+            });
+
+            loadQuestion();
+        })();
+    </script>
+</body>
+</html>
